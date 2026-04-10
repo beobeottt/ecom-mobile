@@ -1,94 +1,175 @@
-
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { ShippingAddress } from './entities/shippingAddress.entity';
-import { ShippingAddressDto } from './dto/shippingAddress.dto';
+
+
 @Injectable()
-export class UsersService {
-    constructor(
-        @InjectRepository(User)
-        private readonly userRepo: Repository<User>,
-    ) { }
+export class UserService {
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
+  ) {}
 
-    async create(dto: CreateUserDto): Promise<User> {
+  async create(
+    dto: CreateUserDto ,
+  ): Promise<User> {
+    const exists = await this.userRepo.findOne({
+      where: { email: dto.email },
+    });
 
-        const exists = await this.userRepo.findOne({ where: { email: dto.email }, });
+    if (exists) return exists;
 
-        if (exists) return exists;
+    const user = this.userRepo.create(dto);
+    return this.userRepo.save(user);
+  }
 
-        const user = this.userRepo.create(dto);
+  async findAll(): Promise<User[]> {
+    return this.userRepo.find({
+      order: { createdAt: 'DESC' },
+    });
+  }
 
-        return await this.userRepo.save(user);
+  async findOne(id: number): Promise<User> {
+    const user = await this.findOne(id);
+    if (!user) {
+      throw new NotFoundException(`User ${id} not found`);
     }
 
-    async findAll(): Promise<User[]> {
-        return this.userRepo.find(
-            {
-                order: { createdAt: 'DESC' },
-            }
-        );
+    return user;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userRepo.findOne({
+      where: { email },
+    });
+  }
+
+  async toggleFavourite(userId: number, productId: number) {
+    const user = await this.findOne(userId);
+
+    const index = user.favourites.findIndex(id => id === productId);
+
+    if (index > -1) {
+      user.favourites.splice(index, 1);
+    } else {
+      user.favourites.push(productId);
     }
 
-    async findOne(id: string): Promise<User> {
-        const user = await this.userRepo.findOne({ where: { id }, });
+    return this.userRepo.save(user);
+  }
 
-        if (!user) {
-            throw new NotFoundException(`User with ID ${id} not found`);
-        }
-        return user;
+  async getFavourites(userId: number): Promise<number[]> {
+    const user = await this.findOne(userId);
+    return user.favourites;
+  }
+
+  async update(id: number, dto: UpdateUserDto): Promise<User> {
+    const user = await this.findOne(id);
+
+    Object.assign(user, dto);
+    return this.userRepo.save(user);
+  }
+
+  async remove(id: number): Promise<void> {
+    const user = await this.findOne(id);
+    await this.userRepo.remove(user);
+  }
+
+  async getShippingAddresses(userId: number) {
+    const user = await this.findOne(userId);
+    return user.shippingAddresses || [];
+  }
+
+  async addShippingAddress(userId: number, dto: ShippingAddress) {
+    const user = await this.findOne(userId);
+
+    const addresses = user.shippingAddresses ?? [];
+
+    const newAddress: ShippingAddress = {
+      ...dto,
+      id: dto.id || Date.now().toString(),
+      isDefault: dto.isDefault ?? addresses.length === 0,
+    };
+
+    if (newAddress.isDefault) {
+      addresses.forEach(a => (a.isDefault = false));
     }
 
-    async findByEmail(email: string): Promise<User> {
-        const user = await this.userRepo.findOne({ where: { email }, });
+    addresses.push(newAddress);
+    user.shippingAddresses = addresses;
 
-        if (!user) {
-            throw new NotFoundException(`User with Email ${email} not found`);
-        }
-        return user;
+    return this.userRepo.save(user);
+  }
+
+  async updateShippingAddress(
+    userId: number,
+    addressId: string,
+    dto: Partial<ShippingAddress>,
+  ) {
+    const user = await this.findOne(userId);
+
+    const addresses = user.shippingAddresses ?? [];
+    const index = addresses.findIndex(a => a.id === addressId);
+
+    if (index === -1) {
+      throw new NotFoundException('Address not found');
     }
 
-    //async toggleFavourite(id: string)
-
-    async update(id: string, dto: UpdateUserDto): Promise<User> {
-        const user = await this.findOne(id);
-
-        if (!user) {
-            throw new NotFoundException(`User with ID ${id} not found`);
-        }
-        Object.assign(user, dto);
-        return this.userRepo.save(user);
+    if (dto.isDefault) {
+      addresses.forEach(a => (a.isDefault = false));
     }
 
-    async remove(id: string): Promise<void> {
-        const user = await this.findOne(id);
-        await this.userRepo.remove(user);
+    addresses[index] = {
+      ...addresses[index],
+      ...dto,
+    };
+
+    user.shippingAddresses = addresses;
+    return this.userRepo.save(user);
+  }
+
+  async removeShippingAddress(userId: number, addressId: string) {
+    const user = await this.findOne(userId);
+
+    let addresses = user.shippingAddresses ?? [];
+
+    const removed = addresses.find(a => a.id === addressId);
+    if (!removed) {
+      throw new NotFoundException('Address not found');
     }
 
-    async getShippingAddresses(userId: string, dto: ShippingAddressDto) {
-        const user = await this.findOne(userId);
-        if (!user) {
-            throw new NotFoundException('User can not find');
-        }
+    addresses = addresses.filter(a => a.id !== addressId);
 
-        const add = user.shippingAddress ?? [];
-        const newAdd = {
-            id: dto.id,
-            label: dto.label,
-            fullName: dto.fullName,
-            phone: dto.phone,
-            addressLine: dto.addressLine,
-            ward: dto.ward,
-            district: dto.district,
-            city: dto.city,
-            note: dto.note,
-            isDefault: dto.isDefault ?? add.length === 0,
-        };
+    if (removed.isDefault && addresses.length > 0) {
+      addresses[0].isDefault = true;
     }
 
+    user.shippingAddresses = addresses;
+    return this.userRepo.save(user);
+  }
 
+  async setDefaultShippingAddress(userId: number, addressId: string) {
+    const user = await this.findOne(userId);
 
+    const addresses = user.shippingAddresses ?? [];
+    const exists = addresses.find(a => a.id === addressId);
+
+    if (!exists) {
+      throw new NotFoundException('Address not found');
+    }
+
+    addresses.forEach(a => {
+      a.isDefault = a.id === addressId;
+    });
+
+    user.shippingAddresses = addresses;
+    return this.userRepo.save(user);
+  }
 }
