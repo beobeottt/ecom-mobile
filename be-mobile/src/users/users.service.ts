@@ -36,7 +36,7 @@ export class UserService {
     });
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOne(id: string): Promise<User> {
     const user = await this.findOne(id);
     if (!user) {
       throw new NotFoundException(`User ${id} not found`);
@@ -51,7 +51,7 @@ export class UserService {
     });
   }
 
-  async toggleFavourite(userId: number, productId: number) {
+  async toggleFavourite(userId: string, productId: number) {
     const user = await this.findOne(userId);
 
     const index = user.favourites.findIndex(id => id === productId);
@@ -65,29 +65,29 @@ export class UserService {
     return this.userRepo.save(user);
   }
 
-  async getFavourites(userId: number): Promise<number[]> {
+  async getFavourites(userId: string): Promise<number[]> {
     const user = await this.findOne(userId);
     return user.favourites;
   }
 
-  async update(id: number, dto: UpdateUserDto): Promise<User> {
+  async update(id: string, dto: UpdateUserDto): Promise<User> {
     const user = await this.findOne(id);
 
     Object.assign(user, dto);
     return this.userRepo.save(user);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const user = await this.findOne(id);
     await this.userRepo.remove(user);
   }
 
-  async getShippingAddresses(userId: number) {
+  async getShippingAddresses(userId: string) {
     const user = await this.findOne(userId);
     return user.shippingAddresses || [];
   }
 
-  async addShippingAddress(userId: number, dto: ShippingAddress) {
+  async addShippingAddress(userId: string, dto: ShippingAddress) {
     const user = await this.findOne(userId);
 
     const addresses = user.shippingAddresses ?? [];
@@ -109,7 +109,7 @@ export class UserService {
   }
 
   async updateShippingAddress(
-    userId: number,
+    userId: string,
     addressId: string,
     dto: Partial<ShippingAddress>,
   ) {
@@ -135,7 +135,7 @@ export class UserService {
     return this.userRepo.save(user);
   }
 
-  async removeShippingAddress(userId: number, addressId: string) {
+  async removeShippingAddress(userId: string, addressId: string) {
     const user = await this.findOne(userId);
 
     let addresses = user.shippingAddresses ?? [];
@@ -155,7 +155,7 @@ export class UserService {
     return this.userRepo.save(user);
   }
 
-  async setDefaultShippingAddress(userId: number, addressId: string) {
+  async setDefaultShippingAddress(userId: string, addressId: string) {
     const user = await this.findOne(userId);
 
     const addresses = user.shippingAddresses ?? [];
