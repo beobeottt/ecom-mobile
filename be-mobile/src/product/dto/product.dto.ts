@@ -8,6 +8,7 @@ import {
     ValidateNested,
     Min,
     IsEnum,
+    IsDate,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { TypeProduct } from 'src/common/enums/product.enum';
@@ -38,7 +39,7 @@ class ProductVariantDto {
 
 export class CreateProductDto {
     @IsString()
-    productName: string;
+    ProductName: string;
 
     @IsString()
     description: string;
@@ -65,6 +66,9 @@ export class CreateProductDto {
     @ValidateNested({ each: true })
     @Type(() => ProductVariantDto)
     variants?: ProductVariantDto[];
+
+    @IsDate()
+    createAt: Date;
 
 }
 

@@ -5,6 +5,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  PrimaryColumn,
 } from 'typeorm';
 @Entity()
 export class Product
@@ -40,20 +41,20 @@ export class Product
     createdAt: Date;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt?: Date;
 
 }
 
 export class ProductVariant
 {
-    @Column()
-    id: string;
+    @PrimaryColumn()
+    id?: string;
 
     @Column()
     label: string;
 
     @Column()
-    price: string;
+    price: number;
 
     @Column()
     quantity: number;
