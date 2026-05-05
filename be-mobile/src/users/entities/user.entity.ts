@@ -7,17 +7,20 @@ import {
 } from 'typeorm';
 import { ShippingAddress } from './shippingAddress.entity';
 import { Gender } from 'src/common/enums/gender.enum';
+import { IsNotEmpty } from 'class-validator';
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn()
-  id: string;
+  @PrimaryGeneratedColumn('uuid')
+  UserId!: string;
 
   @Column()
-  fullname: string;
+  @IsNotEmpty()
+  fullname!: string;
 
   @Column({ unique: true })
-  email: string;
+  @IsNotEmpty()
+  email!: string;
 
   @Column({ nullable: true })
   password?: string;
@@ -26,7 +29,7 @@ export class User {
   shippingAddress?: string;
 
   @Column({ type: 'jsonb', default: [] })
-  shippingAddresses: ShippingAddress[];
+  shippingAddresses!: ShippingAddress[];
 
   @Column({
     type: 'enum',
@@ -36,10 +39,10 @@ export class User {
   gender?: Gender;
 
   @Column({ default: 0 })
-  point: number;
+  point!: number;
 
   @Column({ default: 'USER' })
-  role: string;
+  role!: string;
 
   @Column({ nullable: true })
   avatar?: string;
@@ -49,11 +52,11 @@ export class User {
 
   
   @Column({ type: 'int', array: true, default: [] })
-  favourites: number[];
+  favourites!: number[];
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }
