@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { IsNumber, IsString, IsNotEmpty } from "class-validator";
 
 @Entity('bills')
@@ -35,4 +35,7 @@ export class Bill {
     @IsNumber()
     @IsNotEmpty()
     quantity!: number;
+
+    @CreateDateColumn()
+    createAt!: Date;
 }
