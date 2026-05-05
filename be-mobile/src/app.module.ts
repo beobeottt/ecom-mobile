@@ -6,6 +6,9 @@ import { ProductController } from './product/product.controller';
 import { ProductModule } from './product/product.module';
 import { TypeOrmModule } from '@nestjs/typeorm';   
 import { ConfigModule, ConfigService } from '@nestjs/config'; 
+import { BillController } from './bill/bill.controller';
+import { BillModule } from './bill/bill.module';
+import { StaffModule } from './staff/staff.module';
 @Module({
 imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -26,9 +29,9 @@ imports: [
       }),
     }),
 
-    UsersModule, ProductModule
+    UsersModule, ProductModule, BillModule, StaffModule
   ],
-  controllers: [AppController],
+  controllers: [AppController, BillController],
   providers: [AppService],
 })
 export class AppModule {}

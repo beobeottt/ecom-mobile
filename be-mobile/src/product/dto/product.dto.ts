@@ -9,9 +9,11 @@ import {
     Min,
     IsEnum,
     IsDate,
+    IsNotEmpty,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { TypeProduct } from 'src/common/enums/product.enum';
+import { CreateDateColumn } from 'typeorm';
 
 class ProductVariantDto {
     @IsOptional()
@@ -19,10 +21,12 @@ class ProductVariantDto {
     id?: string;
 
     @IsString()
-    label: string;
+    @IsNotEmpty()
+    label!: string;
 
     @IsNumber()
-    price: number;
+    @IsNotEmpty()
+    price!: number;
 
     @IsInt()
     @IsOptional()
@@ -32,26 +36,34 @@ class ProductVariantDto {
     @IsString()
     sku?: string;
 
-    @IsOptional()
+
     @IsString()
-    image: string;
+    @IsOptional()
+    image?: string;
 }
 
 export class CreateProductDto {
-    @IsString()
-    ProductName: string;
+
 
     @IsString()
-    description: string;
+    @IsNotEmpty()
+    ProductName!: string;
+
+    @IsString()
+    @IsOptional()
+    description?: string;
 
     @IsNumber()
-    price: number;
+    @IsNotEmpty()
+    price!: number;
 
     @IsString()
-    brand: string;
+    @IsOptional()
+    brand?: string;
 
     @IsInt()
-    quantity: number;
+    @IsNotEmpty()
+    quantity!: number;
 
     @IsOptional()
     @IsIn([TypeProduct])
@@ -67,8 +79,8 @@ export class CreateProductDto {
     @Type(() => ProductVariantDto)
     variants?: ProductVariantDto[];
 
-    @IsDate()
-    createAt: Date;
+    @CreateDateColumn({ type: 'timestamp' })
+    createdAt!: Date;
 
 }
 
