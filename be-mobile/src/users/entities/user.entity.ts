@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { ShippingAddress } from './shippingAddress.entity';
 import { Gender } from 'src/common/enums/gender.enum';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 @Entity('users')
 export class User {
@@ -44,10 +44,11 @@ export class User {
   @Column({ default: 'USER' })
   role!: string;
 
-  @Column()
+  @Column({nullable: true})
   avatarUrl?: string;
 
-  @Column()
+  @Column({nullable: true})
+
   googleId?: string;
 
   

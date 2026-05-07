@@ -6,16 +6,19 @@ import {
   IsString,
   ValidateNested,
   IsArray,
+  IsNotEmpty,
 } from 'class-validator';
 import{Type} from 'class-transformer';
 import { ShippingAddressDto } from './shippingAddress.dto';
 import { Gender } from 'src/common/enums/gender.enum';
 export class CreateUserDto{
     @IsString()
-    fullname: string;
+    @IsNotEmpty()
+    fullname!: string;
 
     @IsEmail()
-    email: string;
+    @IsNotEmpty()
+    email!: string;
 
     @IsString()
     @IsOptional()
@@ -23,7 +26,7 @@ export class CreateUserDto{
 
     @IsString()
     @IsOptional()
-    phone: string;
+    phone?: string;
 
     @IsString()
     @IsOptional()

@@ -10,14 +10,14 @@ export class ShippingAddressDto {
   label?: string;
 
   @IsString()
-  fullName: string;
+  fullName!: string;
 
   @IsString()
   @Length(6, 15)
-  phone: string;
+  phone!: string;
 
   @IsString()
-  addressLine: string;
+  addressLine!: string;
 
   @IsOptional()
   @IsString()
