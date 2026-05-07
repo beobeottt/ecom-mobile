@@ -9,12 +9,12 @@ export class Bill {
     @Column()
     @IsString()
     @IsNotEmpty()
-    staffId!: string;
+    StaffId!: string;
 
     @Column()
     @IsString()
     @IsNotEmpty()
-    staffName!: string;
+    StaffName!: string;
     
     @Column({ type: 'decimal', precision: 12, scale: 2 })
     @IsNumber()

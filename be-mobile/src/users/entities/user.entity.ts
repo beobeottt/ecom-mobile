@@ -44,10 +44,10 @@ export class User {
   @Column({ default: 'USER' })
   role!: string;
 
-  @Column({ nullable: true })
-  avatar?: string;
+  @Column()
+  avatarUrl?: string;
 
-  @Column({ nullable: true })
+  @Column()
   googleId?: string;
 
   
