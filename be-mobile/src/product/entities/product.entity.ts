@@ -1,76 +1,105 @@
 import { IsNotEmpty } from 'class-validator';
 import { TypeProduct } from 'src/common/enums/product.enum';
+
 import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    CreateDateColumn,
-    UpdateDateColumn,
-    PrimaryColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-@Entity()
+
+@Entity('products')
 export class Product {
-    @PrimaryGeneratedColumn('uuid')
-    ProductId!: string;
+  @PrimaryGeneratedColumn('uuid')
+  ProductId!: string;
 
-    @Column()
-    @IsNotEmpty()
-    ProductName!: string;
+  @Column()
+  @IsNotEmpty()
+  ProductName!: string;
 
-    @Column()
-    @IsNotEmpty()
-    description!: string;
+  @Column('text')
+  @IsNotEmpty()
+  description!: string;
 
-    @Column()
-    @IsNotEmpty()
-    price!: number;
+  @Column('decimal')
+  @IsNotEmpty()
+  price!: number;
 
-    @Column()
-    @IsNotEmpty()
-    brand!: string;
+  @Column()
+  @IsNotEmpty()
+  brand!: string;
 
-    @Column()
-    @IsNotEmpty()
-    quantity!: number;
+  @Column()
+  @IsNotEmpty()
+  quantity!: number;
 
-    @Column({ enum: ['New Product', 'Best Seller', 'Sale'], default: 'New Product' })
-    typeProduct!: TypeProduct;
+  @Column({
+    type: 'enum',
+    enum: TypeProduct,
+    default: TypeProduct.NewProduct,
+  })
+  typeProduct!: TypeProduct;
 
-    @Column({ nullable: true })
-    imgUrl!: string;
+  @Column({ nullable: true })
+  imgUrl?: string;
 
-    @Column({ type: 'json', nullable: true })
-    variants!: ProductVariant[];
+  @Column({ type: 'jsonb', default: [] })
+  images!: string[];
 
-    @CreateDateColumn()
-    createdAt!: Date;
+  @Column({ type: 'jsonb', default: [] })
+  variants!: ProductVariant[];
 
-    @UpdateDateColumn()
-    updatedAt?: Date;
+  @Column({ type: 'jsonb', default: [] })
+  colors!: string[];
 
+  @Column({ nullable: true })
+  coverage?: string;
+
+  @Column({ nullable: true })
+  finishType?: string;
+
+  @Column()
+  category!: string;
+
+  @Column({
+    type: 'decimal',
+    default: 5,
+  })
+  rating!: number;
+
+  @Column({
+    default: 0,
+  })
+  sold!: number;
+
+  @Column({
+    default: 0,
+  })
+  discount!: number;
+
+  @Column({
+    default: true,
+  })
+  isActive!: boolean;
+
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt?: Date;
 }
 
 export class ProductVariant {
-    @PrimaryColumn()
-    id?: string;
+  id?: string;
 
-    @Column()
-    @IsNotEmpty()
-    label!: string;
+  label!: string;
 
-    @Column()
-    @IsNotEmpty()
-    price!: number;
+  price!: number;
 
-    @Column()
-    @IsNotEmpty()
-    quantity!: number;
+  quantity!: number;
 
-    @Column()
-    sku?: string;
+  sku?: string;
 
-    @Column()
-    image?: string;
+  image?: string;
 }
-
-

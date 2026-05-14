@@ -2,19 +2,19 @@ import { Column } from 'typeorm';
 
 export class ShippingAddress {
   @Column()
-  id: string;
+  id!: string;
 
   @Column({ nullable: true })
   label?: string;
 
   @Column()
-  fullName: string;
+  fullName!: string;
 
   @Column()
-  phone: string;
+  phone!: string;
 
   @Column()
-  addressLine: string;
+  addressLine!: string;
 
   @Column({ nullable: true })
   ward?: string;
@@ -29,5 +29,5 @@ export class ShippingAddress {
   note?: string;
 
   @Column({ default: false })
-  isDefault: boolean;
+  isDefault!: boolean;
 }
