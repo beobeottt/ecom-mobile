@@ -2,11 +2,12 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
+import { CreateUserDto, LoginDto, UpdateUserDto } from './dto/user.dto';
 import { ShippingAddress } from './entities/shippingAddress.entity';
 
 
@@ -29,7 +30,30 @@ export class UserService {
     const user = this.userRepo.create(dto);
     return this.userRepo.save(user);
   }
+  async login(dto: LoginDto) {
 
+        const user = await this.userRepo.findOne({ where: { email: dto.email } });
+        
+        if (!user) {
+            throw new NotFoundException('Email không tồn tại');
+        }
+
+        const isMatch = user.password === dto.password; 
+
+        if (!isMatch) {
+            throw new UnauthorizedException('Mật khẩu không chính xác');
+        }
+
+        return {
+            message: 'Đăng nhập thành công',
+            user: {
+                id: user.UserId,
+                fullname: user.fullname,
+                email: user.email,
+                role: user.role
+            }
+        };
+    }
   async findAll(): Promise<User[]> {
     return this.userRepo.find({
       order: { createdAt: 'DESC' },

@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
+import { CreateUserDto, LoginDto, UpdateUserDto } from './dto/user.dto';
 import { UserService } from './users.service';
 import { UpdateProductDto } from 'src/product/dto/product.dto';
 import { ShippingAddress } from './entities/shippingAddress.entity';
@@ -7,12 +7,15 @@ import { ShippingAddress } from './entities/shippingAddress.entity';
 @Controller('users')
 export class UsersController {
     constructor(private readonly userService: UserService) {}
-    @Post()
+    @Post('register')
     create(@Body () dto: CreateUserDto)
     {
         return this.userService.create(dto);
     }
-
+    @Post('login')
+    async login(@Body() dto: LoginDto) {
+        return this.userService.login(dto);
+    }
     @Get()
     findAll()
     {

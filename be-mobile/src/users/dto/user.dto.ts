@@ -7,6 +7,7 @@ import {
   ValidateNested,
   IsArray,
   IsNotEmpty,
+  MinLength,
 } from 'class-validator';
 import{Type} from 'class-transformer';
 import { ShippingAddressDto } from './shippingAddress.dto';
@@ -49,3 +50,14 @@ export class CreateUserDto{
 }
 
 export class UpdateUserDto extends CreateUserDto{}
+
+export class LoginDto {
+    @IsEmail()
+    @IsNotEmpty()
+    email!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @MinLength(6)
+    password!: string;
+}
