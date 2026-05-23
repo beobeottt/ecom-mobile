@@ -33,7 +33,6 @@ export default function Login() {
     } catch (err: any) {
       console.log("Chi tiết lỗi:", err);
       
-      // Hiển thị lỗi từ backend (ví dụ lỗi NOT NULL fullname)
       const errorMessage = err?.response?.data?.message || "Không thể kết nối tới server";
       Alert.alert("Đăng nhập thất bại", errorMessage);
     } finally {
@@ -47,7 +46,6 @@ export default function Login() {
         <Text className="text-3xl font-black text-blue-600 mb-2">PAINT PRO</Text>
         <Text className="text-slate-400 mb-8 font-medium">Đăng nhập để tiếp tục</Text>
 
-        {/* Ô nhập Email */}
         <TextInput 
           className="bg-slate-100 p-4 rounded-2xl mb-4 text-slate-700"
           placeholder="Email"
@@ -57,8 +55,7 @@ export default function Login() {
           autoCapitalize="none"
           keyboardType="email-address"
         />
-
-        {/* Ô nhập Password */}
+        
         <TextInput
           className="bg-slate-100 p-4 rounded-2xl mb-6 text-slate-700"
           placeholder="Mật khẩu"
@@ -68,7 +65,6 @@ export default function Login() {
           onChangeText={(value) => handleChange('password', value)}
         />
 
-        {/* Nút Đăng nhập */}
         <TouchableOpacity 
           className={`p-4 rounded-2xl shadow-lg ${loading ? 'bg-blue-400' : 'bg-blue-600 shadow-blue-300'}`}
           onPress={handleLogin}
@@ -81,7 +77,6 @@ export default function Login() {
           )}
         </TouchableOpacity>
 
-        {/* Nút chuyển sang Đăng ký */}
         <TouchableOpacity
           onPress={() => router.push('/register')}
           className="mt-6"
