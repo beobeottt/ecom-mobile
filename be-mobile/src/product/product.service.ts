@@ -9,35 +9,38 @@ export class ProductService {
     constructor(
         @InjectRepository(Product)
         private readonly productRepo: Repository<Product>,
-    ){}
+    ) { }
 
     async create(
         dto: CreateProductDto
-    ): Promise<Product>
-    {
+    ): Promise<Product> {
         const exists = await this.productRepo.findOne({
-            where: {ProductName: dto.ProductName},
+            where: { ProductName: dto.ProductName },
         });
 
-        if(exists) return exists;
+        if (exists) return exists;
 
         const newProduct = this.productRepo.create(dto);
         return this.productRepo.save(newProduct);
     }
 
-    async findAll(): Promise<Product[]>
-    {
+    async findAll(): Promise<Product[]> {
         return this.productRepo.find({
-            order: { createdAt: 'DESC'},
+            order: { createdAt: 'DESC' },
         })
     }
 
-    async findOne(productId: string): Promise<Product>
-    {
-        const product = await this.findOne(productId);
-        if(!product)
-        {
-            throw new NotFoundException(`User ${productId} not found`);
+    async findOne(productId: string): Promise<Product> {
+        const product = await this.productRepo.findOne({
+            where: {
+                ProductId: productId,
+            },
+        });
+
+        if (!product) {
+            throw new NotFoundException(
+                `Product ${productId} not found`,
+            );
         }
 
         return product;
@@ -46,23 +49,20 @@ export class ProductService {
     async UpdateProduct(
         productId: string,
         dto: UpdateProductDto
-    ): Promise<Product>
-    {
+    ): Promise<Product> {
         const product = await this.findOne(productId);
 
-        if(!product)
-        {
+        if (!product) {
             throw new NotFoundException(`This is Product Dont Have or can found some thing about ID`);
         }
         Object.assign(productId, dto);
         return this.productRepo.save(product);
     }
 
-    async delete(productId: string): Promise<void>
-    {
+    async delete(productId: string): Promise<void> {
         const product = await this.findOne(productId);
         await this.productRepo.remove(product)
     }
 
-    
+
 }
